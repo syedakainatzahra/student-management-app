@@ -1,4 +1,4 @@
-import React, { useState,} from 'react';
+import React, { useState, useEffect } from 'react';
 
 const Students = () => {
   // Default Initial Students Data
@@ -20,11 +20,20 @@ const Students = () => {
     return saved ? JSON.parse(saved) : defaultStudents;
   });
 
+  // 📱 Mobile responsive state
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   // Form States
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState('');
   const [major, setMajor] = useState('');
-  const [courseId, setCourseId] = useState('CS101'); // Default allocation
+  const [courseId, setCourseId] = useState('CS101'); 
   const [year, setYear] = useState('Freshman');
 
   // Handle Add Student
@@ -34,45 +43,45 @@ const Students = () => {
 
     const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
     const newStudent = {
-      id: `STU-${Math.floor(1000 + Math.random() * 9000)}`, // Random unique ID
+      id: `STU-${Math.floor(1000 + Math.random() * 9000)}`, 
       name,
       initials,
       year,
       major,
       courseId,
-      gpa: 4.0, // Default GPA for newcomers
-      attendance: 100, // Default Attendance
+      gpa: 4.0, 
+      attendance: 100, 
       status: 'Active'
     };
 
     const updatedStudents = [...students, newStudent];
     setStudents(updatedStudents);
     
-    // ⚡ SAVE TO MEMORY FOR ALL PAGES TO READ
     localStorage.setItem('globalStudents', JSON.stringify(updatedStudents));
 
-    // Reset inputs
     setName('');
     setMajor('');
     setShowForm(false);
   };
 
   const styles = {
-    container: { fontFamily: 'system-ui, sans-serif', padding: '20px', color: '#334155' },
-    header: { display: 'flex', justifyContent: 'space-between', marginBottom: '24px' },
-    btnPrimary: { backgroundColor: '#2563eb', color: 'white', border: 'none', padding: '10px 16px', borderRadius: '8px', cursor: 'pointer', fontWeight: '500' },
-    addForm: { background: 'white', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '20px', marginBottom: '24px', display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'flex-end' },
-    formGroup: { display: 'flex', flexDirection: 'column', gap: '6px', flex: 1, minWidth: '150px' },
+    container: { fontFamily: 'system-ui, sans-serif', padding: isMobile ? '10px' : '20px', color: '#334155', boxSizing: 'border-box' },
+    header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: isMobile ? 'wrap' : 'nowrap', gap: '10px' },
+    headingTitle: { fontSize: isMobile ? '1.4rem' : '1.8rem', margin: 0 },
+    btnPrimary: { backgroundColor: '#2563eb', color: 'white', border: 'none', padding: '10px 16px', borderRadius: '8px', cursor: 'pointer', fontWeight: '500', width: isMobile ? '100%' : 'auto' },
+    addForm: { background: 'white', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '20px', marginBottom: '24px', display: 'flex', flexDirection: isMobile ? 'column' : 'row', flexWrap: 'wrap', gap: '12px', alignItems: isMobile ? 'stretch' : 'flex-end' },
+    formGroup: { display: 'flex', flexDirection: 'column', gap: '6px', flex: 1, minWidth: isMobile ? '100%' : '150px' },
     input: { padding: '8px 12px', border: '1px solid #e2e8f0', borderRadius: '8px', outline: 'none' },
-    table: { width: '100%', borderCollapse: 'collapse', backgroundColor: 'white', borderRadius: '12px', overflow: 'hidden', border: '1px solid #e2e8f0' },
+    tableContainer: { width: '100%', overflowX: 'auto', WebkitOverflowScrolling: 'touch', border: '1px solid #e2e8f0', borderRadius: '12px' },
+    table: { width: '100%', borderCollapse: 'collapse', backgroundColor: 'white', minWidth: isMobile ? '600px' : '100%', overflow: 'hidden' },
     th: { backgroundColor: '#f8fafc', padding: '12px', fontSize: '0.8rem', fontWeight: '600', color: '#64748b', textAlign: 'left', borderBottom: '1px solid #e2e8f0' },
-    td: { padding: '12px', borderBottom: '1px solid #f1f5f9' }
+    td: { padding: '12px', borderBottom: '1px solid #f1f5f9', fontSize: isMobile ? '0.9rem' : '1rem' }
   };
 
   return (
     <div style={styles.container}>
       <div style={styles.header}>
-        <h2>Students Directory</h2>
+        <h2 style={styles.headingTitle}>Students Directory</h2>
         <button style={styles.btnPrimary} onClick={() => setShowForm(!showForm)}>
           {showForm ? '➖ Hide Form' : '➕ Add Student'}
         </button>
@@ -108,32 +117,40 @@ const Students = () => {
               <option value="Senior">Senior</option>
             </select>
           </div>
-          <button type="submit" style={styles.btnPrimary}>Save</button>
+          <button type="submit" style={{...styles.btnPrimary, marginTop: isMobile ? '10px' : '0px'}}>Save</button>
         </form>
       )}
 
-      <table style={styles.table}>
-        <thead>
-          <tr>
-            <th style={styles.th}>ID</th>
-            <th style={styles.th}>Name</th>
-            <th style={styles.th}>Major</th>
-            <th style={styles.th}>Course ID</th>
-            <th style={styles.th}>Year</th>
-          </tr>
-        </thead>
-        <tbody>
-          {students.map(student => (
-            <tr key={student.id}>
-              <td style={styles.td}>{student.id}</td>
-              <td style={styles.td, {fontWeight: '600'}}>{student.name}</td>
-              <td style={styles.td}>{student.major}</td>
-              <td style={styles.td}><span style={{background: '#eff6ff', color: '#2563eb', padding: '4px 8px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: '600'}}>{student.courseId}</span></td>
-              <td style={styles.td}>{student.year}</td>
+      {/* 🚀 Table Container wrapper for horizontal scrolling on mobile */}
+      <div style={styles.tableContainer}>
+        <table style={styles.table}>
+          <thead>
+            <tr>
+              <th style={styles.th}>ID</th>
+              <th style={styles.th}>Name</th>
+              <th style={styles.th}>Major</th>
+              <th style={styles.th}>Course ID</th>
+              <th style={styles.th}>Year</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {students.map(student => (
+              <tr key={student.id}>
+                <td style={styles.td}>{student.id}</td>
+                {/* 🌟 Fixed comma operator ESLint warning line right here */}
+                <td style={{...styles.td, fontWeight: '600'}}>{student.name}</td>
+                <td style={styles.td}>{student.major}</td>
+                <td style={styles.td}>
+                  <span style={{background: '#eff6ff', color: '#2563eb', padding: '4px 8px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: '600'}}>
+                    {student.courseId}
+                  </span>
+                </td>
+                <td style={styles.td}>{student.year}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
