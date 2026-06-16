@@ -10,14 +10,12 @@ const Sidebar = () => {
   const [name, setName] = useState('SYEDA KAINAT ZAHRA');
   const [email, setEmail] = useState('syedakainatzahra@gmail.com');
 
-  // 📱 Mobile responsive states
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [isOpen, setIsOpen] = useState(false); 
 
   useEffect(() => {
     const savedName = localStorage.getItem('profileName');
     const savedEmail = localStorage.getItem('profileEmail');
-    
     if (savedName) setName(savedName);
     if (savedEmail) setEmail(savedEmail);
   }, [location]);
@@ -32,7 +30,7 @@ const Sidebar = () => {
   }, []);
 
   useEffect(() => {
-    setIsOpen(false); // Mobile par link click hote hi menu auto-close ho jaye
+    setIsOpen(false); 
   }, [location]);
 
   const getInitials = (userName) => {
@@ -49,7 +47,6 @@ const Sidebar = () => {
   ];
 
   const styles = {
-    // 🌟 Sidebar Container Adjustment
     sidebar: { 
       width: '260px', 
       height: '100vh', 
@@ -61,12 +58,11 @@ const Sidebar = () => {
       position: 'fixed', 
       left: 0, 
       top: 0, 
-      zIndex: 1200, // Drawer layer hamesha upar rahegi
+      zIndex: 1200, 
       boxShadow: '4px 0 15px rgba(0,0,0,0.1)', 
       fontFamily: 'system-ui, sans-serif',
       borderRight: '1px solid #e2e8f0',
     },
-    // 🌟 Dark Overlay Background (Mobile Only)
     overlay: {
       display: isMobile && isOpen ? 'block' : 'none',
       position: 'fixed',
@@ -74,7 +70,7 @@ const Sidebar = () => {
       left: 0,
       width: '100vw',
       height: '100vh',
-      backgroundColor: 'rgba(15, 23, 42, 0.4)', // Safe slate dark glass blur effect
+      backgroundColor: 'rgba(15, 23, 42, 0.4)', 
       zIndex: 1100,
     },
     topSection: { padding: '24px 20px', marginTop: isMobile ? '60px' : '0px' }, 
@@ -95,25 +91,19 @@ const Sidebar = () => {
       color: '#cbd5e1', 
       transition: 'all 0.2s ease' 
     },
-    
-    activeNavItem: { 
-      backgroundColor: '#eff6ff', 
-      color: '#2563eb', 
-      fontWeight: '600' 
-    },
-    navIcon: { fontSize: '1.1rem' },
-
+    activeNavItem: { backgroundColor: '#eff6ff', color: '#2563eb', fontWeight: '600' },
     profileSection: { padding: '20px', borderTop: '1px solid #334155', backgroundColor: '#111054', display: 'flex', alignItems: 'center', gap: '12px' },
     profileAvatar: { width: '40px', height: '40px', backgroundColor: '#2563eb', color: 'white', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '600', fontSize: '0.9rem', flexShrink: 0 },
     profileDetails: { display: 'flex', flexDirection: 'column', overflow: 'hidden' },
     profileName: { fontSize: '0.9rem', fontWeight: '600', color: '#ffffff', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' },
     profileEmail: { fontSize: '0.75rem', color: '#94a3b8', margin: '2px 0 0 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' },
     
+    // 🚀 Fixed se Absolute kiya taake button page ke sath scroll ho
     toggleBtn: {
-      position: 'fixed',
+      position: 'absolute',
       top: '14px',
       left: '14px',
-      zIndex: 1300, // Sabse top taake close icon visible rahe
+      zIndex: 1300, 
       backgroundColor: '#1e1c74',
       color: 'white',
       border: 'none',
@@ -124,17 +114,33 @@ const Sidebar = () => {
       alignItems: 'center',
       justifyContent: 'center',
       boxShadow: '0 2px 8px rgba(30, 28, 116, 0.25)'
+    },
+    // 🚀 Fixed se Absolute kiya taake mobile logo page ke sath scroll ho
+    mobileHeaderLogo: {
+      display: isMobile && !isOpen ? 'flex' : 'none',
+      alignItems: 'center',
+      gap: '10px',
+      position: 'absolute',
+      top: '18px',
+      left: '65px',
+      zIndex: 1100, 
     }
   };
 
   return (
     <>
-      {/* Three Lines/Cross Toggle Button */}
+      {/* Hamburger Toggle Button */}
       <button style={styles.toggleBtn} onClick={() => setIsOpen(!isOpen)}>
         {isOpen ? <FiX size={20} /> : <FiMenu size={20} />}
       </button>
 
-      {/* Background Overlay: Is par click karne se bhi menu band ho jayega */}
+      {/* Smart Mobile Logo Header */}
+      <div style={styles.mobileHeaderLogo}>
+        <img src={myLogo} alt="EduTrack Logo" style={{ width: "26px", height: "26px", objectFit: "contain" }} />
+        <span style={{ fontSize: "1.1rem", fontWeight: "700", color: "#1e1c74" }}>EduTrack</span>
+      </div>
+
+      {/* Dark Overlay Background */}
       <div style={styles.overlay} onClick={() => setIsOpen(false)} />
 
       {/* Sidebar Navigation */}
