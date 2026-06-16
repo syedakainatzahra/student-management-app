@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const Courses = () => {
-  
   const [courses, setCourses] = useState([
     { id: 'CS101', code: 'CS101', title: 'Introduction to Computer Science', instructor: 'Dr. Alex Morgan', students: 2, avgGrade: 'A-', status: 'Active' },
     { id: 'MATH201', code: 'MATH201', title: 'Calculus II', instructor: 'Prof. Sarah Jenkins', students: 1, avgGrade: 'B+', status: 'Active' },
@@ -11,7 +10,6 @@ const Courses = () => {
     { id: 'ENG105', code: 'ENG105', title: 'English Composition', instructor: 'Ms. Linda Davis', students: 1, avgGrade: 'B-', status: 'Active' }
   ]);
 
-  
   const allStudents = JSON.parse(localStorage.getItem('globalStudents')) || [
     { id: 'STU-2401', name: 'Aiden Park', initials: 'AP', year: 'Sophomore', major: 'Computer Science', courseId: 'CS101', gpa: 3.8, attendance: 94, status: 'Active' },
     { id: 'STU-2404', name: 'Diana Okafor', initials: 'DO', year: 'Senior', major: 'Computer Science', courseId: 'CS101', gpa: 3.9, attendance: 97, status: 'Active' },
@@ -24,20 +22,24 @@ const Courses = () => {
     { id: 'STU-2409', name: 'Bilal Ahmed', initials: 'BA', year: 'Freshman', major: 'English Lit.', courseId: 'ENG105', gpa: 3.1, attendance: 80, status: 'Active' }
   ];
 
- 
   const [showAddForm, setShowAddForm] = useState(false);
   const [courseTitle, setCourseTitle] = useState("");
   const [courseCode, setCourseCode] = useState("");
   const [instructorName, setInstructorName] = useState("");
-
-  
   const [selectedCourseId, setSelectedCourseId] = useState('CS101');
 
-  
+  // 📱 Mobile responsive state
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const enrolledStudents = allStudents.filter(student => student.courseId === selectedCourseId);
   const currentCourse = courses.find(c => c.id === selectedCourseId);
 
- 
   const handleAddCourse = (e) => {
     e.preventDefault();
     if (!courseTitle || !courseCode || !instructorName) return;
@@ -61,18 +63,18 @@ const Courses = () => {
   };
 
   const styles = {
-    container: { minHeight: '100vh', backgroundColor: '#f8fafc', fontFamily: 'system-ui, sans-serif', color: '#334155', padding: '40px 20px' },
+    container: { minHeight: '100vh', backgroundColor: '#f8fafc', fontFamily: 'system-ui, sans-serif', color: '#334155', padding: isMobile ? '15px 10px' : '40px 20px', boxSizing: 'border-box' },
     wrapper: { maxWidth: '1200px', margin: '0 auto' },
-    contentHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '32px' },
-    pageTitle: { fontSize: '2rem', fontWeight: '700', color: '#0f172a', margin: 0 },
+    contentHeader: { display: 'flex', justifyContent: 'space-between', alignItems: isMobile ? 'stretch' : 'start', marginBottom: '32px', flexDirection: isMobile ? 'column' : 'row', gap: '16px' },
+    pageTitle: { fontSize: isMobile ? '1.6rem' : '2rem', fontWeight: '700', color: '#0f172a', margin: 0 },
     subtitle: { fontSize: '0.9rem', color: '#64748b', margin: '6px 0 0 0' },
-    btnPrimary: { backgroundColor: '#2563eb', color: 'white', border: 'none', padding: '12px 20px', borderRadius: '8px', fontWeight: '500', fontSize: '0.9rem', cursor: 'pointer' },
-    addForm: { background: 'white', border: '1px solid #e0f2fe', borderRadius: '12px', padding: '20px', marginBottom: '32px', display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', gap: '16px', boxShadow: '0 1px 3px rgba(0,0,0,0.02)' },
-    formGroup: { flex: 1, minWidth: '200px', display: 'flex', flexDirection: 'column', gap: '8px' },
+    btnPrimary: { backgroundColor: '#2563eb', color: 'white', border: 'none', padding: '12px 20px', borderRadius: '8px', fontWeight: '500', fontSize: '0.9rem', cursor: 'pointer', width: isMobile ? '100%' : 'auto' },
+    addForm: { background: 'white', border: '1px solid #e0f2fe', borderRadius: '12px', padding: '20px', marginBottom: '32px', display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'stretch' : 'flex-end', gap: '16px', boxShadow: '0 1px 3px rgba(0,0,0,0.02)' },
+    formGroup: { flex: 1, minWidth: isMobile ? '100%' : '200px', display: 'flex', flexDirection: 'column', gap: '8px' },
     label: { fontSize: '0.75rem', fontWeight: '600', color: '#64748b', textTransform: 'uppercase' },
     input: { padding: '8px 12px', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '0.9rem', outline: 'none', backgroundColor: 'white' },
-    btnSuccess: { backgroundColor: '#059669', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '8px', fontSize: '0.9rem', fontWeight: '500', cursor: 'pointer' },
-    grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '24px', marginBottom: '40px' },
+    btnSuccess: { backgroundColor: '#059669', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '8px', fontSize: '0.9rem', fontWeight: '500', cursor: 'pointer', width: isMobile ? '100%' : 'auto', height: '40px' },
+    grid: { display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(320px, 1fr))', gap: '24px', marginBottom: '40px' },
     card: { backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '24px', boxShadow: '0 1px 3px rgba(0,0,0,0.02)', cursor: 'pointer', transition: 'all 0.2s' },
     cardSelected: { borderColor: '#2563eb', boxShadow: '0 4px 12px rgba(37, 99, 235, 0.05)' },
     cardHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' },
@@ -88,16 +90,16 @@ const Courses = () => {
     footerValue: { fontSize: '0.9rem', fontWeight: '600', color: '#475569' },
     gradeValue: { fontSize: '0.9rem', fontWeight: '600', color: '#2563eb' },
     studentsSection: { marginTop: '40px', borderTop: '1px solid #e2e8f0', paddingTop: '30px' },
-    sectionTitle: { fontSize: '1.4rem', fontWeight: '700', color: '#0f172a', marginBottom: '20px' },
-    tableContainer: { background: 'white', border: '1px solid #e2e8f0', borderRadius: '12px', overflowX: 'auto', boxShadow: '0 1px 3px rgba(0,0,0,0.02)' },
-    table: { width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' },
+    sectionTitle: { fontSize: isMobile ? '1.2rem' : '1.4rem', fontWeight: '700', color: '#0f172a', marginBottom: '20px' },
+    tableContainer: { background: 'white', border: '1px solid #e2e8f0', borderRadius: '12px', overflowX: 'auto', WebkitOverflowScrolling: 'touch', boxShadow: '0 1px 3px rgba(0,0,0,0.02)' },
+    table: { width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem', minWidth: isMobile ? '650px' : '100%' },
     th: { backgroundColor: '#f8fafc', padding: '14px 16px', fontSize: '0.75rem', fontWeight: '600', color: '#64748b', textTransform: 'uppercase', borderBottom: '1px solid #e2e8f0' },
     td: { padding: '14px 16px', borderBottom: '1px solid #f1f5f9', color: '#475569' },
     studentInfo: { display: 'flex', alignItems: 'center', gap: '12px' },
-    studentAvatar: { width: '36px', height: '36px', backgroundColor: '#eff6ff', color: '#2563eb', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '600', fontSize: '0.75rem' },
+    studentAvatar: { width: '36px', height: '36px', backgroundColor: '#eff6ff', color: '#2563eb', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '600', fontSize: '0.75rem', flexShrink: 0 },
     studentNameText: { fontSize: '0.9rem', fontWeight: '600', color: '#0f172a', margin: 0 },
     studentIdText: { fontSize: '0.75rem', color: '#94a3b8', margin: '2px 0 0 0' },
-    progressBarBg: { width: '100px', backgroundColor: '#f1f5f9', height: '6px', borderRadius: '99px', overflow: 'hidden', display: 'inline-block', marginRight: '8px', verticalAlign: 'middle' },
+    progressBarBg: { width: isMobile ? '60px' : '100px', backgroundColor: '#f1f5f9', height: '6px', borderRadius: '99px', overflow: 'hidden', display: 'inline-block', marginRight: '8px', verticalAlign: 'middle' },
     progressBarFill: { height: '100%', borderRadius: '99px', backgroundColor: '#10b981' },
     statusActivePill: { padding: '2px 10px', borderRadius: '99px', fontSize: '0.75rem', fontWeight: '500', backgroundColor: '#ecfdf5', color: '#047857' },
     statusProbationPill: { padding: '2px 10px', borderRadius: '99px', fontSize: '0.75rem', fontWeight: '500', backgroundColor: '#fef2f2', color: '#b91c1c' }
@@ -140,7 +142,6 @@ const Courses = () => {
         {/* COURSES GRID */}
         <div style={styles.grid}>
           {courses.map((course) => {
-            
             const actualStrength = allStudents.filter(s => s.courseId === course.id).length;
 
             return (
@@ -172,12 +173,13 @@ const Courses = () => {
           })}
         </div>
 
-        {/*  STUDENTS DATA TABLE */}
+        {/* STUDENTS DATA TABLE */}
         <div style={styles.studentsSection}>
           <h3 style={styles.sectionTitle}>
             Enrolled Students — <span style={{ color: '#2563eb' }}>{currentCourse?.title || "New Course"}</span>
           </h3>
 
+          {/* 🚀 Table Container wrapper for horizontal scrolling on mobile */}
           <div style={styles.tableContainer}>
             <table style={styles.table}>
               <thead>
