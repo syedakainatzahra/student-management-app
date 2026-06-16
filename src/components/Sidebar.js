@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import myLogo from '../assets/logo.png';
-import { FiMenu, FiX } from 'react-icons/fi'; // 🌟 Hamburger aur Close icons mobile ke liye
+import { FiMenu, FiX } from 'react-icons/fi';
 
 const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // 🌟 ESLint warning se bachne ke liye direct state destructuring (unused setters hata diye hain)
   const [name, setName] = useState('SYEDA KAINAT ZAHRA');
   const [email, setEmail] = useState('syedakainatzahra@gmail.com');
 
@@ -26,14 +25,14 @@ const Sidebar = () => {
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
-      if (window.innerWidth > 768) setIsOpen(false); // Laptop par toggles reset ho jayein
+      if (window.innerWidth > 768) setIsOpen(false); 
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   useEffect(() => {
-    setIsOpen(false); // Mobile par page change hote hi sidebar band ho jaye
+    setIsOpen(false); // Mobile par link click hote hi menu auto-close ho jaye
   }, [location]);
 
   const getInitials = (userName) => {
@@ -50,6 +49,7 @@ const Sidebar = () => {
   ];
 
   const styles = {
+    // 🌟 Sidebar Container Adjustment
     sidebar: { 
       width: '260px', 
       height: '100vh', 
@@ -61,13 +61,23 @@ const Sidebar = () => {
       position: 'fixed', 
       left: 0, 
       top: 0, 
-      zIndex: 1000, 
-      boxShadow: '2px 0 12px rgba(0,0,0,0.05)', 
+      zIndex: 1200, // Drawer layer hamesha upar rahegi
+      boxShadow: '4px 0 15px rgba(0,0,0,0.1)', 
       fontFamily: 'system-ui, sans-serif',
       borderRight: '1px solid #e2e8f0',
-      transition: 'transform 0.3s ease'
     },
-    topSection: { padding: '24px 20px', marginTop: isMobile ? '50px' : '0px' }, 
+    // 🌟 Dark Overlay Background (Mobile Only)
+    overlay: {
+      display: isMobile && isOpen ? 'block' : 'none',
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100vw',
+      height: '100vh',
+      backgroundColor: 'rgba(15, 23, 42, 0.4)', // Safe slate dark glass blur effect
+      zIndex: 1100,
+    },
+    topSection: { padding: '24px 20px', marginTop: isMobile ? '60px' : '0px' }, 
     logoContainer: { display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '32px', paddingLeft: '8px' },
     logoImage: { width: '38px', height: '38px', objectFit: 'contain', borderRadius: '5px' },
     logoText: { fontSize: '1.25rem', fontWeight: '700', color: '#ffffff', margin: 0, letterSpacing: '0.5px' }, 
@@ -101,28 +111,33 @@ const Sidebar = () => {
     
     toggleBtn: {
       position: 'fixed',
-      top: '12px',
-      left: '12px',
-      zIndex: 1100,
+      top: '14px',
+      left: '14px',
+      zIndex: 1300, // Sabse top taake close icon visible rahe
       backgroundColor: '#1e1c74',
       color: 'white',
       border: 'none',
-      borderRadius: '6px',
-      padding: '8px',
+      borderRadius: '8px',
+      padding: '10px',
       cursor: 'pointer',
       display: isMobile ? 'flex' : 'none',
       alignItems: 'center',
       justifyContent: 'center',
-      boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
+      boxShadow: '0 2px 8px rgba(30, 28, 116, 0.25)'
     }
   };
 
   return (
     <>
+      {/* Three Lines/Cross Toggle Button */}
       <button style={styles.toggleBtn} onClick={() => setIsOpen(!isOpen)}>
         {isOpen ? <FiX size={20} /> : <FiMenu size={20} />}
       </button>
 
+      {/* Background Overlay: Is par click karne se bhi menu band ho jayega */}
+      <div style={styles.overlay} onClick={() => setIsOpen(false)} />
+
+      {/* Sidebar Navigation */}
       <div style={styles.sidebar}>
         <div style={styles.topSection}>
           <div style={styles.logoContainer}>
@@ -152,7 +167,6 @@ const Sidebar = () => {
                       } 
                     }}
                   >
-                    <span style={styles.navIcon}>{item.icon}</span>
                     <span>{item.name}</span>
                   </li>
                 );
