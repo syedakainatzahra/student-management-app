@@ -25,37 +25,47 @@ function Dashboard() {
   // 🚀 Laptop par "2fr 1fr" (side-by-side) aur mobile par "1fr" (upar-niche)
   const gridLayout = isMobile ? "1fr" : "2fr 1fr";
 
-  return (
-    <div style={{
-      // 🚀 Mobile par thodi side padding aur top padding handle ki hai taake hamburger menu se content safe rahe
-      padding: isMobile ? "10px 5px 30px 5px" : "0px 0px 40px 0px",
+  const styles = {
+    container: {
+      // 🚀 Mobile padding ko exact container boundaries ke sath sync kiya hai
+      padding: isMobile ? "60px 12px 30px 12px" : "0px 0px 40px 0px",
       boxSizing: "border-box",
-      width: "100%"
-    }}>
+      width: "100%",
+      maxWidth: "100%",
+      overflowX: "hidden" // Kisi bhi qism ka accident horizontal bleed rokne ke liye
+    },
+    gridSection: {
+      display: "grid",
+      gridTemplateColumns: gridLayout, // 🚀 Dynamic responsive layout
+      gap: "20px",
+      marginTop: "20px",
+      width: "100%",
+      boxSizing: "border-box",
+      minWidth: 0 // 🔥 CRITICAL FIX: Yeh responsive grid items ko limits se bahar stretch hone se rokta hai
+    },
+    gridItem: {
+      minWidth: 0, // 🔥 Har individual card ke container ko locked rakhega
+      width: "100%",
+      boxSizing: "border-box"
+    }
+  };
+
+  return (
+    <div style={styles.container}>
       <DashboardHeader />
       
       <StatsCards totalStudents={totalStudentsCount} />
 
       {/* 📊 Charts Grid (Grade & Attendance) */}
-      <div style={{
-        display: "grid",
-        gridTemplateColumns: gridLayout, // 🚀 Dynamic responsive layout
-        gap: "20px",
-        marginTop: "20px"
-      }}>
-        <GradeChart />
-        <AttendanceChart />
+      <div style={styles.gridSection}>
+        <div style={styles.gridItem}><GradeChart /></div>
+        <div style={styles.gridItem}><AttendanceChart /></div>
       </div>
 
       {/* 📋 Data Grid (Top Students & Recent Activity) */}
-      <div style={{
-        display: "grid",
-        gridTemplateColumns: gridLayout, // 🚀 Dynamic responsive layout
-        gap: "20px",
-        marginTop: "20px"
-      }}>
-        <TopStudents />
-        <RecentActivity />
+      <div style={styles.gridSection}>
+        <div style={styles.gridItem}><TopStudents /></div>
+        <div style={styles.gridItem}><RecentActivity /></div>
       </div>
     </div>
   );
