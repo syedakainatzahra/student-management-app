@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const Settings = () => {
   // 1. Initial configuration components checked directly from memory
@@ -14,6 +14,15 @@ const Settings = () => {
     studentRegistration: true,
     gradeSubmissions: false,
   });
+
+  // 📱 Mobile responsive screen check state
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleProfileChange = (e) => {
     setProfile({ ...profile, [e.target.name]: e.target.value });
@@ -31,25 +40,25 @@ const Settings = () => {
   };
 
   const styles = {
-    container: { fontFamily: 'system-ui, sans-serif', color: '#334155' },
-    pageTitle: { fontSize: '2rem', fontWeight: '700', color: '#0f172a', margin: 0 },
+    container: { fontFamily: 'system-ui, sans-serif', color: '#334155', padding: isMobile ? '15px 5px' : '0px', boxSizing: 'border-box' },
+    pageTitle: { fontSize: isMobile ? '1.6rem' : '2rem', fontWeight: '700', color: '#0f172a', margin: 0 },
     subtitle: { fontSize: '0.9rem', color: '#64748b', margin: '4px 0 32px 0' },
     grid: { display: 'flex', flexDirection: 'column', gap: '32px', maxWidth: '800px' },
-    card: { backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '24px', boxShadow: '0 1px 3px rgba(0,0,0,0.02)' },
+    card: { backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '12px', padding: isMobile ? '16px' : '24px', boxShadow: '0 1px 3px rgba(0,0,0,0.02)' },
     cardTitle: { fontSize: '1.2rem', fontWeight: '600', color: '#0f172a', margin: '0 0 8px 0' },
     cardSubtitle: { fontSize: '0.85rem', color: '#64748b', margin: '0 0 24px 0' },
-    formGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' },
+    formGrid: { display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '20px' }, // 🚀 Mobile par single column layout
     formGroup: { display: 'flex', flexDirection: 'column', gap: '8px' },
     label: { fontSize: '0.8rem', fontWeight: '600', color: '#475569', textTransform: 'uppercase' },
     input: { padding: '10px 14px', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '0.9rem', outline: 'none', backgroundColor: '#f8fafc', color: '#334155' },
     inputDisabled: { backgroundColor: '#f1f5f9', color: '#94a3b8', cursor: 'not-allowed' },
-    toggleRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 0', borderBottom: '1px solid #f1f5f9' },
-    toggleInfo: { display: 'flex', flexDirection: 'column', gap: '4px' },
+    toggleRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 0', borderBottom: '1px solid #f1f5f9', gap: '12px' },
+    toggleInfo: { display: 'flex', flexDirection: 'column', gap: '4px', flex: 1 },
     toggleTitle: { fontSize: '0.95rem', fontWeight: '500', color: '#334155' },
     toggleDesc: { fontSize: '0.8rem', color: '#64748b' },
-    switchBtn: { border: 'none', width: '48px', height: '24px', borderRadius: '99px', padding: '2px', cursor: 'pointer', display: 'flex', transition: 'background-color 0.2s' },
+    switchBtn: { border: 'none', width: '48px', height: '24px', borderRadius: '99px', padding: '2px', cursor: 'pointer', display: 'flex', transition: 'background-color 0.2s', flexShrink: 0 },
     switchCircle: { width: '20px', height: '20px', backgroundColor: 'white', borderRadius: '50%', boxShadow: '0 1px 3px rgba(0,0,0,0.15)', transition: 'transform 0.2s' },
-    btnPrimary: { backgroundColor: '#2563eb', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '8px', fontWeight: '500', fontSize: '0.9rem', cursor: 'pointer', marginTop: '16px', alignSelf: 'flex-start' }
+    btnPrimary: { backgroundColor: '#2563eb', color: 'white', border: 'none', padding: '12px 20px', borderRadius: '8px', fontWeight: '500', fontSize: '0.9rem', cursor: 'pointer', marginTop: '16px', alignSelf: isMobile ? 'stretch' : 'flex-start', textAlign: 'center' } // 🚀 Mobile par full width button
   };
 
   return (
@@ -83,7 +92,6 @@ const Settings = () => {
             </div>
           </div>
           
-          {/* Linked onClick to our local storage saving logic */}
           <button type="button" style={styles.btnPrimary} onClick={handleSaveProfile}>Save Profile</button>
         </div>
 
