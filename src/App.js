@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 
+// 🌟 Logo import karein (Aapka logo path agar different hai toh check kar lein)
+import myLogo from "./assets/logo.png"; 
+
 import Dashboard from "./pages/Dashboard";
 import Students from "./pages/Students";
 import Courses from "./pages/Courses";
@@ -10,7 +13,6 @@ import Attendance from "./pages/Attendance";
 import Settings from "./pages/Settings";
 
 function App() {
-  // 📱 Mobile screen check karne ke liye state
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   useEffect(() => {
@@ -23,20 +25,44 @@ function App() {
     appWrapper: { 
       display: "flex", 
       minHeight: "100vh", 
-      background: "#f8fafc", // Main layout ka bg bhi clean white/slate kar diya
+      background: "#f8fafc", 
       width: "100vw",
       overflowX: "hidden" 
     },
+    // 🌟 Mobile Top Bar Container (Sirf mobile par dikhega, laptop par hidden)
+    mobileHeader: {
+      display: isMobile ? "flex" : "none",
+      alignItems: "center",
+      gap: "10px",
+      position: "fixed",
+      top: "14px",
+      left: "65px", // Hamburger button ke aage space banayi hai taake overlap na ho
+      zIndex: 1300,
+      pointerEvents: "none" // Taake clicks iske peeche buttons par asar na karein
+    },
+    mobileLogo: {
+      width: "30px",
+      height: "30px",
+      objectFit: "contain",
+      borderRadius: "4px"
+    },
+    mobileLogoText: {
+      fontSize: "1.1rem",
+      fontWeight: "700",
+      color: "#1e1c74",
+      margin: 0,
+      letterSpacing: "0.5px"
+    },
     contentArea: { 
       flex: 1, 
-      padding: isMobile ? "20px 14px" : "30px", // Mobile par halki padding taake corners crash na hon
+      // Mobile par top padding thodi barha di taake content logo/hamburger se niche render ho
+      padding: isMobile ? "70px 14px 30px 14px" : "30px", 
       background: "#f8fafc",
-      // 🚀 Laptop par 280px space chhorega, mobile par 0px taake light blue box khatam ho jaye!
       marginLeft: isMobile ? "0px" : "280px", 
       minHeight: "100vh",
       boxSizing: "border-box",
       width: "100%",
-      minWidth: 0 // Content items ko right bleed karne se rokega
+      minWidth: 0 
     }
   };
 
@@ -44,6 +70,12 @@ function App() {
     <BrowserRouter>
       <div style={styles.appWrapper}>
         
+        {/* Mobile-Only Top Left Logo & Text */}
+        <div style={styles.mobileHeader}>
+          <img src={myLogo} alt="EduTrack Logo" style={styles.mobileLogo} />
+          <h1 style={styles.mobileLogoText}>EduTrack</h1>
+        </div>
+
         {/* Responsive Sidebar Menu */}
         <Sidebar />
 
